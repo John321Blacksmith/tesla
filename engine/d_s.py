@@ -21,6 +21,10 @@ class Input:
 	
 	@category.setter
 	def category(self, category) -> Union[str | None]:
+		"""
+  		Category automatically gets unknown
+		if no suitable category was found.
+    	"""
 		self._category = category if category else 'unknown'
 	
 	@property
@@ -29,8 +33,15 @@ class Input:
 		A collection of words
 		the input consists.
 		"""
-		return {w.lower() for w in self.data.split(' ') if len(w) > 2} # inconsitent input error
-	
+		return {w.lower() for w in self.data.split(' ') if len(w) > 2 and w.isalpha()}
+
+	def is_valid(self):
+		"""
+		Ensure the input is not
+  		empty.
+		"""
+		return len(self.literal_data) != 0
+
 	def __repr__(self) -> str:
 		return f'{self.__class__}, category <{self.category}>'
 
