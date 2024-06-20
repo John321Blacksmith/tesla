@@ -1,5 +1,6 @@
+from typing import Union
 from .d_s import Input, InputsList, FrequencyDict
-from .exceptions import OnlyDigitsDetectedError
+from .exceptions import *
 
 
 class DataManager:
@@ -46,25 +47,27 @@ class Manager:
 		"""
 		return obj if isinstance(obj, Input) else Input(obj)
 	
-	def take_input(self, inputs: tuple[str]):
+	def take_input(self, *inputs):
 		"""
 		Pick up the input/s and
-		save it to the history.
+		save it to the history
+		if one is valid.
 		Args:
-			:sentences: tuple[Text | any]
+			:inputs: tuple[str]
 		"""
 		for inp in inputs:
 			defined_input: Input = self.format_object(inp)
-			defined_input.category = self.classify(defined_input)
-			self.inputs.append(defined_input)
+			if defined_input.is_valid():
+				defined_input.category = self.classify(defined_input)
+				self.inputs.append(defined_input)
 		
-	def classify(self, inp) -> str | None:
+	def classify(self, inp: Input) -> Union[str | None]:
 		"""
 		Take an Input object and use its
 		literal data attrubute for
 		classification.
 		Args:
-			:sentence: Input
+			:inp: Input
 			
 		:returns: str | None
 		"""
