@@ -1,14 +1,6 @@
-class IconsistentInputError(Exception):
+class UnknownInputError(Exception):
     """
-    Error is raised when the input
-    contains types other than string.
-    """
-    ...
-    
-    
-class EmptyInputsListError(Exception):
-    """
-    Raised when there are not any
-    labels based upon inputs.
+    Raised when the final decision
+    on the input is unknown.
     """
     ...
