@@ -1,4 +1,5 @@
 from typing import Union
+from .exceptions import UnknownInputError
 
 
 class Input:
@@ -62,7 +63,7 @@ class FrequencyDict(dict):
 		"""
 		tups: list[tuple[str, int]] = [(k, v) for k, v in self.items() if v > 0]
 		if len(tups) > 0:
-			possible_tuple = tups[0]
+			possible_tuple: tuple[str, int] = tups[0]
 			for i in range(1, len(tups)):
 				if tups[i][1] > possible_tuple[1]:
 					possible_tuple = tups[i]
@@ -90,9 +91,15 @@ class InputsList(list):
 					frequency[context] += 1
 				else:
 					frequency[context] = 1
-			return frequency.greatest_pair[0]
+			try:
+				if frequency.greatest_pair[0] == 'unknown':
+					raise UnknownInputError('The main context of the input was not understood')
+			except UnknownInputError as exc:
+				print(exc.args[0])
+			else:
+				return frequency.greatest_pair[0]
 		return None
-	
+
 	@property
 	def contexts(self) -> list[str]:
 		"""
