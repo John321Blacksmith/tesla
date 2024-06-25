@@ -35,7 +35,7 @@ class Manager:
 		self.dataset = dataset
 		self.inputs = InputsList()
 		
-	def format_object(self, obj) -> Input:
+	def format_object(self, obj: Union[str, Input]) -> Input:
 		"""
 		Ensure the input being
 		taken is of the Input
