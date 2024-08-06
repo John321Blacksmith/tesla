@@ -8,8 +8,8 @@ class Input:
 	user's input with its literal
 	words and category.
 	"""
-	def __init__(self, data):
-		self.data = data
+	def __init__(self, data: Union[str | tuple[str]]):
+		self.data = data if isinstance(data, str) else ' '.join(d for d in data)
 		
 	@property
 	def category(self) -> str:
