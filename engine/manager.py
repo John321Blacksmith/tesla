@@ -3,24 +3,6 @@ from .d_s import Input, InputsList, FrequencyDict
 from .exceptions import *
 
 
-class DataManager:
-	def __init__(self, filename: str):
-		self.filename = filename
-	
-	def serialize(self, obj):
-		"""
-		Transform the python
-		object to the Bytes.
-		"""
-		...
-	
-	def deserialize(self):
-		"""
-		Convert the bytes back
-		to the python object.
-		"""
-		...
-		
 
 class Manager:
 	"""
