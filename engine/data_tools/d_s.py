@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Union, List, Iterable
 from .exceptions import UnknownInputError
 
 
@@ -8,7 +8,7 @@ class Input:
 	user's input with its literal
 	words and category.
 	"""
-	def __init__(self, data: Union[str | tuple[str]]):
+	def __init__(self, data: Union[str | Iterable]):
 		self.data = data if isinstance(data, str) else ' '.join(d for d in data)
 		
 	@property
@@ -35,6 +35,20 @@ class Input:
 		the input consists.
 		"""
 		return {w.lower() for w in self.data.split(' ') if len(w) > 2 and w.isalpha()}
+
+	@staticmethod
+	def categorize_particles(particles: Iterable[str]) -> tuple[str, int]:
+		"""
+		Take a python object
+		and categorize it based
+		on its particles.
+		"""
+		frequency = FrequencyDict()
+		if len(particles) != 0:
+			for p in particles:
+				if p in frequency: frequency[p] += 1
+				else: frequency[p] = 1
+		return frequency.greatest_pair
 
 	def is_valid(self):
 		"""
@@ -73,8 +87,9 @@ class FrequencyDict(dict):
 
 class InputsList(list):
 	"""
-	A data structure which contains
-	input objects with their data.
+	A List of all coming inputs.
+	The contexts and a main context
+	are returned here.
 	"""
 	
 	@property
@@ -86,19 +101,14 @@ class InputsList(list):
 		:returns: str | None
 		"""
 		if len(self.contexts) > 0:
-			frequency = FrequencyDict()
-			for context in self.contexts:
-				if context in frequency:
-					frequency[context] += 1
-				else:
-					frequency[context] = 1
+			result: tuple[str, int] = Input.categorize_particles(self.contexts)
 			try:
-				if frequency.greatest_pair[0] == 'unknown':
+				if result[0] == 'unknown':
 					raise UnknownInputError('The main context of the input was not understood')
 			except UnknownInputError as exc:
 				print(exc.args[0])
 			else:
-				return frequency.greatest_pair[0]
+				return result
 		return None
 
 	@property
@@ -110,15 +120,3 @@ class InputsList(list):
 		:returns: list[str]
 		"""
 		return [s.category for s in self]
-	
-	@property
-	def unrecognized_inputs(self) -> List["Input"]:
-		"""
-		Gather a list of all the
-		inputs not classified.
-		"""
-		return [inp for inp in self if inp.category == 'unknown']
-
-	@property
-	def recognized_inputs(self) -> List["Input"]:
-		return [inp for inp in self if inp.category != 'unknown']

@@ -1,8 +1,8 @@
-from typing import Union
+from typing import Union, List, Any
 from ..data_tools.d_s import Input, InputsList, FrequencyDict
 
 
-class InputProcessor:
+class InputManager:
 	"""
 	This manager processes every
 	user's input and adds to an
@@ -13,19 +13,26 @@ class InputProcessor:
 	"""
 	def __init__(self, dataset: dict[str, set]):
 		self.dataset = dataset
-		self.inputs = InputsList()
-		
-	def format_object(self, obj: Union[str, Input]) -> Input:
+		self.known_inputs: List['Input'] = InputsList()
+		self.unknown_inputs: List['Input'] = InputsList()
+	
+	@staticmethod
+	def format_object(obj: Union[str, Input, Any]) -> Input:
 		"""
 		Ensure the input being
 		taken is of the Input
 		type.
 		Args:
-			:obj: any[str] | Text
+			:obj: str | Input
 			
 		:returns: Input
 		"""
-		return obj if isinstance(obj, Input) else Input(obj)
+		if isinstance(obj, str):
+			return Input(obj)
+		else:
+			if hasattr(obj, '__dict__'):
+				data = {v for v in obj.__dict__.values() if isinstance(v, str)}
+				return Input(data)
 	
 	def take_input(self, *inputs):
 		"""
@@ -36,10 +43,13 @@ class InputProcessor:
 			:inputs: tuple[str]
 		"""
 		for inp in inputs:
-			defined_input: Input = self.format_object(inp)
-			if defined_input.is_valid():
-				defined_input.category = self.classify(defined_input)
-				self.inputs.append(defined_input)
+			formatted_input: Input = self.format_object(inp)
+			if formatted_input.is_valid():
+				formatted_input.category = self.classify(formatted_input)
+				if formatted_input.category != 'unknown':
+					self.known_inputs.append(formatted_input)
+				else:
+					self.unknown_inputs.append(formatted_input)
 		
 	def classify(self, inp: Input) -> Union[str | None]:
 		"""
@@ -71,10 +81,10 @@ class InputProcessor:
 		return frequency.greatest_pair[0]
 	
 	@property
-	def main_context(self) -> str:
+	def main_context(self) -> str | None:
 		"""
 		Get a main subject from
 		the list of inputs.
 		:returns: str
 		"""
-		return self.inputs.main_context
+		return self.known_inputs.main_context
