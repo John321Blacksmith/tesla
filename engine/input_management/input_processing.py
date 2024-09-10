@@ -13,8 +13,8 @@ class InputManager:
 	"""
 	def __init__(self, dataset: dict[str, set]):
 		self.dataset = dataset
-		self.known_inputs: List['Input'] = InputsList()
-		self.unknown_inputs: List['Input'] = InputsList()
+		self.known_inputs = InputsList()
+		self.unknown_inputs = InputsList()
 	
 	@staticmethod
 	def format_object(obj: Union[str, Input, Any]) -> Input:
@@ -34,7 +34,7 @@ class InputManager:
 				data = {v for v in obj.__dict__.values() if isinstance(v, str)}
 				return Input(data)
 	
-	def take_input(self, *inputs):
+	def take_input(self, inp: str):
 		"""
 		Pick up the input/s and
 		save it to the history
@@ -42,7 +42,8 @@ class InputManager:
 		Args:
 			:inputs: tuple[str]
 		"""
-		for inp in inputs:
+		sentences = [s for s in inp.split('.') if s != '']
+		for inp in sentences:
 			formatted_input: Input = self.format_object(inp)
 			if formatted_input.is_valid():
 				formatted_input.category = self.classify(formatted_input)

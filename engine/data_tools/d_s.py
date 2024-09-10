@@ -1,4 +1,4 @@
-from typing import Union, List, Iterable
+from typing import Union, List, Iterable, Sized
 from .exceptions import UnknownInputError
 
 
@@ -21,7 +21,7 @@ class Input:
 		return self._category
 	
 	@category.setter
-	def category(self, category) -> Union[str | None]:
+	def category(self, category):
 		"""
   		Category automatically gets unknown
 		if no suitable category was found.
@@ -68,21 +68,24 @@ class FrequencyDict(dict):
 	data attribute.
 	"""
 	@property
-	def greatest_pair(self) -> tuple[str, int]:
+	def greatest_pair(self) -> Union[tuple[str, int] | None] :
 		"""
 		Evaluate key-value pairs
 		and find one with the
 		greatest value.
-		:returns: tuple[int, str]
+
+		:returns: tuple[str, int] | list[tuple[str, int]]
 		"""
 		tups: list[tuple[str, int]] = [(k, v) for k, v in self.items() if v > 0]
+
 		if len(tups) > 0:
 			possible_tuple: tuple[str, int] = tups[0]
 			for i in range(1, len(tups)):
 				if tups[i][1] > possible_tuple[1]:
 					possible_tuple = tups[i]
+
 			return possible_tuple
-		return (None, 0)
+		
 		
 
 class InputsList(list):
@@ -93,12 +96,12 @@ class InputsList(list):
 	"""
 	
 	@property
-	def main_context(self) -> Union[str | None]:
+	def main_context(self) -> Union[tuple[str, int] | None]:
 		"""
 		Collect context frequencies
 		in a dict and find the main
 		context.
-		:returns: str | None
+		:returns: str | list[str] | None
 		"""
 		if len(self.contexts) > 0:
 			result: tuple[str, int] = Input.categorize_particles(self.contexts)
