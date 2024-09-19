@@ -1,5 +1,8 @@
 from typing import Union, List, Any
-from ..data_tools.d_s import Input, InputsList, FrequencyDict
+from ..data_tools.d_s import(
+	Input, KnownInputs,
+	UnknownInputs, FrequencyDict
+)
 
 
 class InputManager:
@@ -13,8 +16,8 @@ class InputManager:
 	"""
 	def __init__(self, dataset: dict[str, set]):
 		self.dataset = dataset
-		self.known_inputs = InputsList()
-		self.unknown_inputs = InputsList()
+		self.known_inputs = KnownInputs()
+		self.unknown_inputs = UnknownInputs()
 	
 	@staticmethod
 	def format_object(obj: Union[str, Input, Any]) -> Input:
@@ -33,8 +36,9 @@ class InputManager:
 			if hasattr(obj, '__dict__'):
 				data = {v for v in obj.__dict__.values() if isinstance(v, str)}
 				return Input(data)
+		return obj
 	
-	def take_input(self, inp: str):
+	def take_input(self, inp: str) -> None:
 		"""
 		Pick up the input/s and
 		save it to the history
@@ -79,7 +83,7 @@ class InputManager:
 							object_set.add(pattern)
 			frequency.update({k: len(object_set & v) for k, v in self.dataset.items()})
 			
-		return frequency.greatest_pair[0]
+		return frequency.greatest_pair
 	
 	@property
 	def main_context(self) -> str | None:
