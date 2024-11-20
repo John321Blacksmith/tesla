@@ -25,7 +25,9 @@ class Input:
 		"""
   		Category automatically gets unknown
 		if no suitable category was found.
-    	"""
+
+    	:param category:
+		"""
 		self._category = category if category else 'unknown'
 	
 	@property
@@ -60,7 +62,7 @@ class FrequencyDict(dict):
 		and find one with the
 		greatest value.
 
-		:returns: tuple[str, int] | list[tuple[str, int]]
+		:returns:
 		"""
 		tups: list[tuple[str, int]] = [(k, v) for k, v in self.items() if v > 0]
 
@@ -82,6 +84,8 @@ class KnownInputs(list):
 		Take a python object
 		and categorize it based
 		on its particles.
+
+		:param particles:
 		"""
 		frequency = FrequencyDict()
 		if len(particles) != 0:
@@ -97,7 +101,7 @@ class KnownInputs(list):
 		in a dict and find the main
 		context.
 		
-		:returns: str | list[str] | None
+		:returns:
 		"""
 		if len(self.contexts) > 0:
 			result: tuple[str, int] = self.categorize_particles(self.contexts)
@@ -117,7 +121,7 @@ class KnownInputs(list):
 		all the sentences being
 		taken from input.
 
-		:returns: list[str]
+		:returns:
 		"""
 		return [s.category for s in self]
 	

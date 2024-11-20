@@ -19,6 +19,8 @@ class Manager:
         self.source = source
         self.input_processor = InputManager(source)
         self.data_manager = DataManager()
+        self._known_inputs = KnownInputs
+        self._unknown_inputs = UnknownInputs
 
     @property
     def known_inputs(self)-> KnownInputs:
@@ -42,8 +44,7 @@ class Manager:
         and split it to known
         and unknown inputs.
 
-        Args:
-            :inp: str
+        :param inp:
         """
         self.input_processor.take_input(inp)
         self.unknown_inputs = self.input_processor.unknown_inputs

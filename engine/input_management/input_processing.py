@@ -25,10 +25,9 @@ class InputManager:
 		Ensure the input being
 		taken is of the Input
 		type.
-		Args:
-			:obj: str | Input
-			
-		:returns: Input
+		
+		:param Union[str, Input, Any] obj:
+		:returns: an Input object
 		"""
 		if isinstance(obj, str):
 			return Input(obj)
@@ -43,8 +42,8 @@ class InputManager:
 		Pick up the input/s and
 		save it to the history
 		if one is valid.
-		Args:
-			:inputs: tuple[str]
+
+		:params inputs:
 		"""
 		sentences = [s for s in inp.split('.') if s != '']
 		for inp in sentences:
@@ -61,10 +60,9 @@ class InputManager:
 		Take an Input object and use its
 		literal data attrubute for
 		classification.
-		Args:
-			:inp: Input
-			
-		:returns: str | None
+		
+		:param inp:
+		:return:
 		"""
 		# string data from an Input
 		literal_data: set[str] = inp.literal_data
@@ -90,6 +88,6 @@ class InputManager:
 		"""
 		Get a main subject from
 		the list of inputs.
-		:returns: str
+		:returns:
 		"""
 		return self.known_inputs.main_context
