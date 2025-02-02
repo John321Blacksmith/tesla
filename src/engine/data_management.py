@@ -3,7 +3,7 @@ from typing import List
 
 
 
-class DataManager:
+class _DataManager:
     """
     This manager performs data
     oriented work over the processed
@@ -41,3 +41,23 @@ class DataManager:
         Query data from storage.
         """
         ...
+
+
+class DataManager:
+    """
+    This manager performs
+    work over the proccessed data
+    and connects the DB.
+
+    # serialization & deserializtation data
+    # update the storage
+    # retrieving the data from the storage
+    """
+
+    def serialize_data(self) -> None:...
+
+    def deserialize_data(self) -> None:...
+
+    def update_storage(self) -> None:...
+
+    def retrieve_data(self) -> None:...

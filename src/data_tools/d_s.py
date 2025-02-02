@@ -1,52 +1,26 @@
 from typing import Union, Iterable
-from .exceptions import UnknownInputError
+from dataclasses import dataclass
+
+from .exceptions import UnknownSentenceError
 
 
-class Input:
+@dataclass
+class Sentence:
 	"""
-	This class represents every
-	user's input with its literal
-	words and category.
+	This class represents
+	a prepared sentence
+	with its context.
 	"""
-	def __init__(self, data: Union[str | Iterable]):
-		self.data = data if isinstance(data, str) else ' '.join(d for d in data)
-		
-	@property
-	def category(self) -> str:
-		"""
-		A category to which
-		the input can be
-		associated.
-		"""
-		return self._category
-	
-	@category.setter
-	def category(self, category):
-		"""
-  		Category automatically gets unknown
-		if no suitable category was found.
-
-    	:param category:
-		"""
-		self._category = category if category else 'unknown'
+	data: set[str]
+	context: str = "undefined"
+	object_set: Union[set[str] | None] = None
 	
 	@property
-	def literal_data(self) -> set[str]:
-		"""
-		A collection of words
-		the input consists.
-		"""
-		return {w.lower() for w in self.data.split(' ') if len(w) > 2 and w.isalpha()}
-
-	def is_valid(self):
-		"""
-		Ensure the input is not
-  		empty.
-		"""
-		return len(self.literal_data) != 0
+	def is_valid(self) -> bool:
+		return len(self.data) > 0
 
 	def __repr__(self) -> str:
-		return f'{self.__class__}, category <{self.category}>'
+		return f'{self.__class__}, context <{self.context}>'
 
 
 class FrequencyDict(dict):
@@ -55,29 +29,34 @@ class FrequencyDict(dict):
 	with an implemented
 	data attribute.
 	"""
+	def __init__(self) -> None:
+		self._greatest_pair: tuple[str, int]
+
 	@property
-	def greatest_pair(self) -> Union[tuple[str, int] | None] :
+	def greatest_pair(self) -> tuple[str, int]:
+		return self._greatest_pair
+	
+	@greatest_pair.setter()
+	def greatest_pair(self, pair: tuple[str, int]) -> None:
+		self._greatest_pair = pair
+
+	def find_greatest_pair(self) -> None:
 		"""
 		Evaluate key-value pairs
 		and find one with the
 		greatest value.
-
-		:returns:
 		"""
 		tups: list[tuple[str, int]] = [(k, v) for k, v in self.items() if v > 0]
-
 		if len(tups) > 0:
 			possible_tuple: tuple[str, int] = tups[0]
 			for i in range(1, len(tups)):
 				if tups[i][1] > possible_tuple[1]:
 					possible_tuple = tups[i]
+			self.greatest_pair = possible_tuple
 
-			return possible_tuple[0]
-		
-
-class KnownInputs(list):
+class KnownSentences(list):
 	"""
-	A all recognized inputs.
+	A list of all recognized sentences.
 	"""
 	def categorize_particles(self, particles: Iterable[str]) -> tuple[str, int]:
 		"""
@@ -92,6 +71,7 @@ class KnownInputs(list):
 			for p in particles:
 				if p in frequency: frequency[p] += 1
 				else: frequency[p] = 1
+			frequency.find_greatest_pair()
 		return frequency.greatest_pair
 
 	@property
@@ -107,8 +87,8 @@ class KnownInputs(list):
 			result: tuple[str, int] = self.categorize_particles(self.contexts)
 			try:
 				if result[0] == 'unknown':
-					raise UnknownInputError('The main context of the input was not understood')
-			except UnknownInputError as exc:
+					raise UnknownSentenceError('The main context of the Sentence was not understood')
+			except UnknownSentenceError as exc:
 				print(exc.args[0])
 			else:
 				return result
@@ -119,15 +99,15 @@ class KnownInputs(list):
 		"""
 		Collect the categories of
 		all the sentences being
-		taken from input.
+		taken from Sentence.
 
 		:returns:
 		"""
-		return [s.category for s in self]
+		return [s.context for s in self]
 	
 
-class UnknownInputs(list):
+class UnknownSentences(list):
 	"""
-	A list of all unrecognized inputs.
+	A list of all unrecognized Sentences.
 	"""
 	...
